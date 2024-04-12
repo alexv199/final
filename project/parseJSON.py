@@ -269,7 +269,7 @@ for lineup in lineups:
             period = str(c['period'])
             card = '\'(' + time + ', ' + type_ + ', ' + reason + ', ' + period + ')\', '
 
-            cards += player
+            cards += card
 
         cards = cards[:-2] + ']'
 
@@ -287,9 +287,9 @@ for lineup in lineups:
             end_reason = '"' + p['end_reason'] + '"'
             position = '\'(' + position_name + ', ' + from_ + ', ' + to + ', ' + from_period + ', ' + to_period + ', ' + start_reason + ', ' + end_reason + ')\', '
 
-            cards += player
+            positions += position
 
-        cards = cards[:-2] + ']'
+        positions = position[:-2] + ']'
 
     to_write += '( ' + str(lineup['match_id']) + ', ' + str(player['team_id']) + ', ' + str(player['player_id']) + ', ' + str(player['jersey_number']) + ' ),\n'
 
