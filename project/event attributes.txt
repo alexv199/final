@@ -1,0 +1,185 @@
+1 / "Lost" -- 1 / “Ground Pass”
+2 / “Low Pass”
+3 / “High Pass”
+4 / “Won”
+5 / “Yellow Card”
+6 / “Second Yellow"
+7 / “Red Card”
+8 / "Lost" --> if value is Lost id = 1, convert to id = 8 // 8 "Complete"
+9 / “Incomplete”
+10 / “Aerial Lost”
+11 / “Tackle”
+
+13 / “Lost In Play”
+14 / “Lost Out”
+15 / “Success”
+16 / “Success In Play”
+17 / “Success Out”
+
+19 / "6 seconds"
+20 / "Backpass Pick"
+21 / "Dangerous Play"
+22 / "Dive"
+23 / "Foul Out"
+24 / "Handball"
+Collected / 25
+Goal Conceded / 26
+Keeper Sweeper / 27
+Penalty Conceded / 28
+Penalty Saved / 29
+Punch / 30
+Save / 31
+Shot Faced / 32
+Shot Saved / 33
+Smother / 34
+35 / “Both Hands”
+36 / “Chest”
+37 / “Head”
+38 / “Left Foot”
+39 / “Left Hand”
+40 / “Right Foot”
+41 / “Right Hand”
+42 / “Moving”
+43 / “Prone”
+44 / “Set”
+45 / “Diving”
+46 / “Standing”
+47 / "Claim"
+48 / "Clear"
+49 / "Collected Twice"
+50 / "Fail"
+
+52 / "In Play Danger"
+53 / "In Play Safe"
+
+55 / "No Touch"
+56 / "Saved Twice"
+
+58 / "Touched In"
+59 / "Touched Out"
+
+61 / “Corner”
+62 / “Free Kick”
+63 / “Goal Kick”
+64 / “Interception”
+65 / “Kick Off” -- 65 / “Yellow Card” --> convert to id 5
+66 / “Recovery” -- 66 / “Second Yellow" --> convert to id 6
+67 / “Throw-in” -- 67 / “Red Card” --> convert to id 7
+68 / “Drop Kick”
+69 / “Keeper Arm”
+70 / “Other”
+
+
+74 / “Injury Clearance”
+75 / “Out”
+76 / “Pass Offside”
+77 / “Unknown”
+
+
+87 / “Open Play”
+88 / “Penalty”
+89 / “Backheel”
+90 / “Diving Header”
+91 / “Half Volley”
+92 / “Lob”
+93 / “Normal”
+94 / “Overhead Kick”
+95 / “Volley”
+96 / “Blocked”
+97 / “Goal”
+98 / “Off T”
+99 / “Post”
+100 / “Saved”
+101 / “Wayward”
+102 / “Injury”
+103 / “Tactical”
+104 / “Inswinging”
+105 / “Outswinging”
+106 / “No Touch”
+107 / “Straight”
+108 / “Through Ball” -- 108 / “Won” --> convert to 118
+Penalty Saved To Post / 109 -- 109 / “Lost” --> convert to 119
+Saved to Post / 110
+
+Shot Saved Off T / 113
+Shot Saved To Post / 114
+115 / “Saved Off T”
+116 / “Saved To Post”
+117 / “Punched Out”
+118 / “Won”
+119 / “Lost”
+120 / "Complete" --> convert from no id
+121 / "Incomplete --> convert from no id
+
+147 / “Success To Team”
+148 / “Success To Opposition”
+
+
+
+
+type id: 33
+player: True, position: True, location: True, duration: True, under_pressure: True, off_camera: False, out: True
+type id: 24
+player: True, position: True, location: False, duration: True, under_pressure: False, off_camera: True, out: False
+type id: 42
+player: True, position: True, location: True, duration: False, under_pressure: True, off_camera: False, out: False
+type id: 2
+player: True, position: True, location: True, duration: True, under_pressure: True, off_camera: True, out: True
+type id: 6
+player: True, position: True, location: True, duration: True, under_pressure: True, off_camera: True, out: True
+type id: 43
+player: True, position: True, location: True, duration: True, under_pressure: True, off_camera: False, out: False
+type id: 9
+player: True, position: True, location: True, duration: True, under_pressure: True, off_camera: True, out: True
+type id: 3
+player: True, position: True, location: True, duration: True, under_pressure: True, off_camera: True, out: False
+type id: 14
+player: True, position: True, location: True, duration: True, under_pressure: True, off_camera: True, out: True
+type id: 39
+player: True, position: True, location: True, duration: True, under_pressure: False, off_camera: True, out: False
+type id: 4
+player: True, position: True, location: True, duration: True, under_pressure: True, off_camera: True, out: False
+type id: 37
+player: True, position: True, location: True, duration: True, under_pressure: True, off_camera: True, out: False
+type id: 22
+player: True, position: True, location: True, duration: True, under_pressure: True, off_camera: True, out: False
+type id: 21
+player: True, position: True, location: True, duration: True, under_pressure: True, off_camera: True, out: False
+type id: 23
+player: True, position: True, location: True, duration: True, under_pressure: True, off_camera: True, out: True
+type id: 34
+player: False, position: False, location: False, duration: True, under_pressure: True, off_camera: False, out: False
+type id: 18
+player: False, position: False, location: False, duration: True, under_pressure: False, off_camera: False, out: False
+type id: 40
+player: True, position: True, location: True, duration: True, under_pressure: True, off_camera: True, out: False
+type id: 10
+player: True, position: True, location: True, duration: True, under_pressure: True, off_camera: True, out: False
+type id: 38
+player: True, position: True, location: True, duration: True, under_pressure: True, off_camera: True, out: True
+type id: 8
+player: True, position: True, location: True, duration: True, under_pressure: False, off_camera: False, out: False
+type id: 20
+player: True, position: True, location: True, duration: True, under_pressure: False, off_camera: False, out: False
+type id: 25
+player: True, position: True, location: True, duration: True, under_pressure: False, off_camera: False, out: False
+type id: 30
+player: True, position: True, location: True, duration: True, under_pressure: True, off_camera: True, out: True
+type id: 27
+player: True, position: True, location: False, duration: True, under_pressure: False, off_camera: True, out: False
+type id: 26
+player: True, position: True, location: False, duration: True, under_pressure: False, off_camera: True, out: False
+type id: 17
+player: True, position: True, location: True, duration: True, under_pressure: True, off_camera: True, out: False
+type id: 41
+player: False, position: False, location: True, duration: True, under_pressure: False, off_camera: True, out: False
+type id: 28
+player: True, position: True, location: True, duration: True, under_pressure: True, off_camera: False, out: False
+type id: 16
+player: True, position: True, location: True, duration: True, under_pressure: True, off_camera: True, out: True
+type id: 35
+player: False, position: False, location: False, duration: True, under_pressure: False, off_camera: False, out: False
+type id: 19
+player: True, position: True, location: False, duration: True, under_pressure: False, off_camera: True, out: False
+type id: 36
+player: False, position: False, location: False, duration: True, under_pressure: False, off_camera: False, out: False
