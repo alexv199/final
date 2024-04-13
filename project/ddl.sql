@@ -1,21 +1,18 @@
-DROP TABLE IF EXISTS referees; -- done
-CREATE TABLE referees (
+CREATE TABLE IF NOT EXISTS referees (
     referee_id          integer PRIMARY KEY,
     name                varchar(50),
     country             varchar(35)
 );
 
 
-DROP TABLE IF EXISTS stadiums; -- done
-CREATE TABLE stadiums (
+CREATE TABLE IF NOT EXISTS stadiums (
     stadium_id          integer PRIMARY KEY,
     name                varchar(50),
     country             varchar(35)
 );
 
 
-DROP TABLE IF EXISTS managers; -- done
-CREATE TABLE managers (
+CREATE TABLE IF NOT EXISTS managers (
     manager_id          integer PRIMARY KEY,
     name                varchar(50),
     nickname            varchar(50),
@@ -24,18 +21,16 @@ CREATE TABLE managers (
 );
 
 
-DROP TABLE IF EXISTS teams; -- done
-CREATE TABLE teams (
+CREATE TABLE IF NOT EXISTS teams (
     team_id             integer PRIMARY KEY,
     name                varchar(50),
     gender              varchar(6),
-    "group"               varchar(20), -- not sure about character length
+    "group"             varchar(20), -- not sure about character length
     country             varchar(35)
 );
 
 
-DROP TABLE IF EXISTS competitions; -- done
-CREATE TABLE competitions (
+CREATE TABLE IF NOT EXISTS competitions (
     competition_id      int PRIMARY KEY,
     country             varchar(35),
     name              varchar(50),
@@ -45,11 +40,10 @@ CREATE TABLE competitions (
 );
 
 
-DROP TABLE IF EXISTS matches; -- done
-CREATE TABLE matches (
+CREATE TABLE IF NOT EXISTS matches (
     match_id                    integer PRIMARY KEY,
-    match_date                  date,
-    kick_off                    time, -- game start time
+    match_date                        date,
+    kick_off                     time, -- game start time
     competition_id              integer REFERENCES competitions,
     season                      char(9), -- yyyy/yyyy
     home_team_id                integer REFERENCES teams,
@@ -57,22 +51,20 @@ CREATE TABLE matches (
     home_score                  integer,
     away_score                  integer,
     match_week                  integer,
-    competition_stage           varchar(40),
+    competition_stage_name      varchar(40),
     stadium_id                  integer REFERENCES stadiums,
     referee_id                  integer REFERENCES referees
 );
 
 
-DROP TABLE IF EXISTS managers_by_team_and_match; -- done
-CREATE TABLE managers_by_team_and_match (
+CREATE TABLE IF NOT EXISTS managers_by_team_and_match (
     match_id        integer REFERENCES matches,
     team_id         integer REFERENCES teams,
     manager_id      integer REFERENCES managers
 );
 
 
-DROP TABLE IF EXISTS players; -- done
-CREATE TABLE players (
+CREATE TABLE IF NOT EXISTS players (
     player_id           integer PRIMARY KEY,
     name                varchar(50),
     nickname            varchar(50),
@@ -98,8 +90,7 @@ CREATE TYPE position AS (
 );
 
 
-DROP TABLE IF EXISTS lineups;
-CREATE TABLE lineups (
+CREATE TABLE IF NOT EXISTS lineups (
     match_id            integer REFERENCES matches,
     team_id             integer REFERENCES teams,
     player_id           integer REFERENCES players,
@@ -112,8 +103,7 @@ CREATE TABLE lineups (
 -- one table per event type, which lists match/player/team info, plus event specific info
 
 -- 50/50
-DROP TABLE IF EXISTS event_33;
-CREATE TABLE event_33 (
+CREATE TABLE IF NOT EXISTS event_33 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -134,8 +124,7 @@ CREATE TABLE event_33 (
 
 
 -- Bad Behaviour
-DROP TABLE IF EXISTS event_24;
-CREATE TABLE event_24 (
+CREATE TABLE IF NOT EXISTS event_24 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -153,8 +142,7 @@ CREATE TABLE event_24 (
 
 
 -- Ball Receipt
-DROP TABLE IF EXISTS event_42;
-CREATE TABLE event_42 (
+CREATE TABLE IF NOT EXISTS event_42 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -173,8 +161,7 @@ CREATE TABLE event_42 (
 
 
 -- Ball Recovery
-DROP TABLE IF EXISTS event_2;
-CREATE TABLE event_2 (
+CREATE TABLE IF NOT EXISTS event_2 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -196,8 +183,7 @@ CREATE TABLE event_2 (
 
 
 -- Block
-DROP TABLE IF EXISTS event_6;
-CREATE TABLE event_6 (
+CREATE TABLE IF NOT EXISTS event_6 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -221,8 +207,7 @@ CREATE TABLE event_6 (
 
 
 -- Carry
-DROP TABLE IF EXISTS event_43;
-CREATE TABLE event_43 (
+CREATE TABLE IF NOT EXISTS event_43 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -242,8 +227,7 @@ CREATE TABLE event_43 (
 
 
 -- Clearance
-DROP TABLE IF EXISTS event_9;
-CREATE TABLE event_9 (
+CREATE TABLE IF NOT EXISTS event_9 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -265,8 +249,7 @@ CREATE TABLE event_9 (
 
 
 -- Dispossessed
-DROP TABLE IF EXISTS event_3;
-CREATE TABLE event_3 (
+CREATE TABLE IF NOT EXISTS event_3 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -285,8 +268,7 @@ CREATE TABLE event_3 (
 
 
 -- Dribble
-DROP TABLE IF EXISTS event_14;
-CREATE TABLE event_14 (
+CREATE TABLE IF NOT EXISTS event_14 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -310,8 +292,7 @@ CREATE TABLE event_14 (
 
 
 -- Dribbled Past
-DROP TABLE IF EXISTS event_39;
-CREATE TABLE event_39 (
+CREATE TABLE IF NOT EXISTS event_39 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -330,8 +311,7 @@ CREATE TABLE event_39 (
 
 
 -- Duel
-DROP TABLE IF EXISTS event_4;
-CREATE TABLE event_4 (
+CREATE TABLE IF NOT EXISTS event_4 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -353,8 +333,7 @@ CREATE TABLE event_4 (
 
 
 -- Error
-DROP TABLE IF EXISTS event_37;
-CREATE TABLE event_37 (
+CREATE TABLE IF NOT EXISTS event_37 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -373,8 +352,7 @@ CREATE TABLE event_37 (
 
 
 -- Foul Committed
-DROP TABLE IF EXISTS event_22;
-CREATE TABLE event_22 (
+CREATE TABLE IF NOT EXISTS event_22 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -399,8 +377,7 @@ CREATE TABLE event_22 (
 
 
 -- Foul Won
-DROP TABLE IF EXISTS event_21;
-CREATE TABLE event_21 (
+CREATE TABLE IF NOT EXISTS event_21 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -422,8 +399,7 @@ CREATE TABLE event_21 (
 
 
 -- Goal Keeper
-DROP TABLE IF EXISTS event_23;
-CREATE TABLE event_23 (
+CREATE TABLE IF NOT EXISTS event_23 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -448,8 +424,7 @@ CREATE TABLE event_23 (
 
 
 -- Half End
-DROP TABLE IF EXISTS event_34;
-CREATE TABLE event_34 (
+CREATE TABLE IF NOT EXISTS event_34 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -464,8 +439,7 @@ CREATE TABLE event_34 (
 
 
 -- Half Start
-DROP TABLE IF EXISTS event_18;
-CREATE TABLE event_18 (
+CREATE TABLE IF NOT EXISTS event_18 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -479,8 +453,7 @@ CREATE TABLE event_18 (
 
 
 -- Injury Stoppage
-DROP TABLE IF EXISTS event_40;
-CREATE TABLE event_40 (
+CREATE TABLE IF NOT EXISTS event_40 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -499,8 +472,7 @@ CREATE TABLE event_40 (
 
 
 -- Interception
-DROP TABLE IF EXISTS event_10;
-CREATE TABLE event_10 (
+CREATE TABLE IF NOT EXISTS event_10 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -520,8 +492,7 @@ CREATE TABLE event_10 (
 
 
 -- Miscontrol
-DROP TABLE IF EXISTS event_38;
-CREATE TABLE event_38 (
+CREATE TABLE IF NOT EXISTS event_38 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -542,8 +513,7 @@ CREATE TABLE event_38 (
 
 
 -- Offside
-DROP TABLE IF EXISTS event_8;
-CREATE TABLE event_8 (
+CREATE TABLE IF NOT EXISTS event_8 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -560,8 +530,7 @@ CREATE TABLE event_8 (
 
 
 -- Own Goal Against
-DROP TABLE IF EXISTS event_20;
-CREATE TABLE event_20 (
+CREATE TABLE IF NOT EXISTS event_20 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -578,8 +547,7 @@ CREATE TABLE event_20 (
 
 
 -- Own Goal For
-DROP TABLE IF EXISTS event_25;
-CREATE TABLE event_25 (
+CREATE TABLE IF NOT EXISTS event_25 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -596,8 +564,7 @@ CREATE TABLE event_25 (
 
 
 -- Pass
-DROP TABLE IF EXISTS event_30;
-CREATE TABLE event_30 (
+CREATE TABLE IF NOT EXISTS event_30 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -619,7 +586,7 @@ CREATE TABLE event_30 (
     angle                   float,
     height                  varchar(20),
     end_location            point,
-    assisted_shot_id        integer REFERENCES event_16,
+    assisted_shot_id        uuid,
     backheel                boolean,
     deflected               boolean,
     miscommunication        boolean,
@@ -636,8 +603,7 @@ CREATE TABLE event_30 (
 
 
 -- Player Off
-DROP TABLE IF EXISTS event_27;
-CREATE TABLE event_27 (
+CREATE TABLE IF NOT EXISTS event_27 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -654,8 +620,7 @@ CREATE TABLE event_27 (
 
 
 -- Player On
-DROP TABLE IF EXISTS event_26;
-CREATE TABLE event_26 (
+CREATE TABLE IF NOT EXISTS event_26 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -672,8 +637,7 @@ CREATE TABLE event_26 (
 
 
 -- Pressure
-DROP TABLE IF EXISTS event_17;
-CREATE TABLE event_17 (
+CREATE TABLE IF NOT EXISTS event_17 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -694,8 +658,7 @@ CREATE TABLE event_17 (
 
 
 -- Referee Ball Drop
-DROP TABLE IF EXISTS event_41;
-CREATE TABLE event_41 (
+CREATE TABLE IF NOT EXISTS event_41 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -711,8 +674,7 @@ CREATE TABLE event_41 (
 
 
 -- Shield
-DROP TABLE IF EXISTS event_28;
-CREATE TABLE event_28 (
+CREATE TABLE IF NOT EXISTS event_28 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -730,8 +692,7 @@ CREATE TABLE event_28 (
 
 
 -- Shot
-DROP TABLE IF EXISTS event_16;
-CREATE TABLE event_16 (
+CREATE TABLE IF NOT EXISTS event_16 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -748,7 +709,7 @@ CREATE TABLE event_16 (
     under_pressure          boolean,
     off_camera              boolean,
     out                     boolean,
-    key_pass_id             integer REFERENCES event_30,
+    key_pass_id             uuid REFERENCES event_30(event_id),
     end_location            point,
     aerial_won              boolean,
     follows_dribble         boolean,
@@ -772,8 +733,7 @@ CREATE TYPE lineup AS (
 
 
 -- Starting XI
-DROP TABLE IF EXISTS event_35;
-CREATE TABLE event_35 (
+CREATE TABLE IF NOT EXISTS event_35 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -785,8 +745,7 @@ CREATE TABLE event_35 (
 
 
 -- Substitution
-DROP TABLE IF EXISTS event_19;
-CREATE TABLE event_19 (
+CREATE TABLE IF NOT EXISTS event_19 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -805,8 +764,7 @@ CREATE TABLE event_19 (
 
 
 -- Tactical Shift
-DROP TABLE IF EXISTS event_36;
-CREATE TABLE event_36 (
+CREATE TABLE IF NOT EXISTS event_36 (
     event_id                uuid PRIMARY KEY,
     match_id                integer REFERENCES matches,
     index                   integer,
@@ -821,17 +779,14 @@ CREATE TABLE event_36 (
     lineup                  lineup[]
 );
 
+CREATE TABLE IF NOT EXISTS events_by_type (
+    event_id                uuid PRIMARY KEY,
+    table_name              char(8)
+);
 
-DROP TABLE IF EXISTS related_events;
-CREATE TABLE related_events (
+CREATE TABLE IF NOT EXISTS related_events (
     event_id_1              uuid REFERENCES events_by_type,
     event_id_2              uuid REFERENCES events_by_type
     -- primary key combined id 1 and 2
 );
 
-
-DROP TABLE IF EXISTS events_by_type;
-CREATE TABLE events_by_type (
-    event_id                uuid PRIMARY KEY,
-    table_name              char(8)
-);
