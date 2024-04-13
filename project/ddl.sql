@@ -48,8 +48,8 @@ CREATE TABLE competitions (
 DROP TABLE IF EXISTS matches; -- done
 CREATE TABLE matches (
     match_id                    integer PRIMARY KEY,
-    match_date                        date,
-    kick_off                     time, -- game start time
+    match_date                  date,
+    kick_off                    time, -- game start time
     competition_id              integer REFERENCES competitions,
     season                      char(9), -- yyyy/yyyy
     home_team_id                integer REFERENCES teams,
@@ -57,7 +57,7 @@ CREATE TABLE matches (
     home_score                  integer,
     away_score                  integer,
     match_week                  integer,
-    competition_stage_name      varchar(40),
+    competition_stage           varchar(40),
     stadium_id                  integer REFERENCES stadiums,
     referee_id                  integer REFERENCES referees
 );
