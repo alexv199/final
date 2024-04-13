@@ -151,7 +151,7 @@ ORDER BY num_intended_recipient DESC
 -- q8
 /*
 SELECT
-    t.name AS team_name, COUNT(*) AS num_of_through_balls
+    t.name, COUNT(*) AS num_of_through_balls
 FROM
     teams AS t
     INNER JOIN LATERAL (
