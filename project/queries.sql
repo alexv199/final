@@ -175,6 +175,37 @@ ORDER BY num_intended_recipient DESC
 */
 
 
+--q7
+/*
+SELECT
+    p.name, COUNT(*) AS num_of_through_balls
+FROM
+    players AS p
+    INNER JOIN LATERAL (
+        SELECT
+            player_id
+        FROM
+            event_30 AS e
+            INNER JOIN LATERAL (
+                SELECT
+                    m.match_id, m.season
+                FROM
+                    matches AS m
+                    INNER JOIN LATERAL (
+                        SELECT
+                            competition_id
+                        FROM competitions AS c
+                        WHERE c.name = 'La Liga'
+                    ) AS c ON m.competition_id = c.competition_id
+                WHERE m.season = '2020/2021'
+            ) AS m ON e.match_id = m.match_id
+        WHERE e.technique = 'Through Ball'
+    ) AS e ON p.player_id = e.player_id
+GROUP BY p.name
+ORDER BY num_of_through_balls DESC
+;
+*/
+
 -- q8
 /*
 SELECT
