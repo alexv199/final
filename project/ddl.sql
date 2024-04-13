@@ -1,7 +1,13 @@
+-- reset the database
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO public;
+
 -- create composite data types
 DO $$ BEGIN
 CREATE TYPE card AS (
-    time                timestamp,
+    time                interval,
     type                varchar(20),
     reason              varchar(20),
     period              integer
@@ -13,8 +19,8 @@ END $$;
 DO $$ BEGIN
 CREATE TYPE position AS (
     name                varchar(25),
-    "from"                timestamp,
-    "to"                  timestamp,
+    "from"              interval,
+    "to"                interval,
     from_period         integer,
     to_period           integer,
     start_reason        varchar(35),
@@ -65,7 +71,6 @@ CREATE TABLE IF NOT EXISTS teams (
     team_id             integer PRIMARY KEY,
     name                varchar(50),
     gender              varchar(6),
-    "group"             varchar(20), -- not sure about character length
     country             varchar(35)
 );
 
@@ -73,7 +78,7 @@ CREATE TABLE IF NOT EXISTS teams (
 CREATE TABLE IF NOT EXISTS competitions (
     competition_id      int PRIMARY KEY,
     country             varchar(35),
-    name              varchar(50),
+    name                varchar(50),
     gender              varchar(6),
     youth               boolean,
     international       boolean
@@ -747,8 +752,9 @@ CREATE TABLE IF NOT EXISTS event_16 (
 );
 
 -- add foreign key constrain to event_30
+--ALTER TABLE event_30 DROP CONSTRAINT IF EXISTS fk_assisted_shot;
 ALTER TABLE event_30
-    ADD CONSTRAINT FOREIGN KEY (assisted_shot_id)
+    ADD CONSTRAINT fk_assisted_shot FOREIGN KEY (assisted_shot_id)
         REFERENCES event_16 (event_id) ON DELETE CASCADE;
 
 
