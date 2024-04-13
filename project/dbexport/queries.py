@@ -497,7 +497,35 @@ def Q_8(conn, execution_time):
     #==========================================================================
     # Enter QUERY within the quotes:
 
-    query = """ """
+    query = """
+            SELECT
+                t.name, COUNT(*) AS num_of_through_balls
+            FROM
+                teams AS t
+                INNER JOIN LATERAL (
+                    SELECT
+                        team_id
+                    FROM
+                        event_30 AS e
+                        INNER JOIN LATERAL (
+                            SELECT
+                                m.match_id, m.season
+                            FROM
+                                matches AS m
+                                INNER JOIN LATERAL (
+                                    SELECT
+                                        competition_id
+                                    FROM competitions AS c
+                                    WHERE c.name = 'La Liga'
+                                ) AS c ON m.competition_id = c.competition_id
+                            WHERE m.season = '2020/2021'
+                        ) AS m ON e.match_id = m.match_id
+                    WHERE e.technique = 'Through Ball'
+                ) AS e ON t.team_id = e.team_id
+            GROUP BY t.name
+            ORDER BY num_of_through_balls DESC
+            ;
+            """
 
     #==========================================================================
 

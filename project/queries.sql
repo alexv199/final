@@ -199,7 +199,7 @@ FROM
                     ) AS c ON m.competition_id = c.competition_id
                 WHERE m.season = '2020/2021'
             ) AS m ON e.match_id = m.match_id
-        WHERE e.type = 'Through Ball'
+        WHERE e.technique = 'Through Ball'
     ) AS e ON t.team_id = e.team_id
 GROUP BY t.name
 ORDER BY num_of_through_balls DESC
