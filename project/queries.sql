@@ -115,3 +115,33 @@ WHERE first_time = TRUE
 GROUP BY name
 ORDER BY num_first_time DESC
 ;
+
+
+
+/*
+SELECT
+    p.name, COUNT(*) AS num_of_dribbles
+FROM
+    players AS p
+    INNER JOIN LATERAL (
+        SELECT
+            player_id
+        FROM
+            event_39 AS e
+            INNER JOIN LATERAL (
+                SELECT
+                    m.match_id, m.season
+                FROM
+                    matches AS m
+                    INNER JOIN LATERAL (
+                        SELECT
+                            competition_id
+                        FROM competitions AS c
+                        WHERE c.name = 'La Liga'
+                    ) AS t ON m.competition_id = t.competition_id
+            ) AS t ON e.match_id = t.match_id AND t.season = '2020/2021'
+    ) AS t ON p.player_id = t.player_id
+GROUP BY p.name
+ORDER BY number_of_dribbles_past ASC
+;
+*/
