@@ -23,24 +23,22 @@ for file in os.listdir(directory):
 
     related_events += related_events_by_match
     related_events_by_match = []
-    print(len(related_events))
 
     for e in data:
         # need event type specific data
         type_id = e['type']['id']
-#        if type_id != 36: # for debugging
-#            continue
+        if type_id != 43: # for debugging
+            continue
 
 #        events_by_type.append({'event_id' : e['id'], 'type' : type_id})
 
-        if 'related_events' in e:
-            for rel_event in e['related_events']:
-                event_id0 = {'event_id' : e['id'], 'other_event_id' : rel_event}
-                event_id1 = {'event_id' : rel_event, 'other_event_id' : e['id']}
-                if event_id1 not in related_events_by_match: # don't track the same pair twice
-                    related_events_by_match.append(event_id0)
+#        if 'related_events' in e:
+#            for rel_event in e['related_events']:
+#                event_id0 = {'event_id' : e['id'], 'other_event_id' : rel_event}
+#                event_id1 = {'event_id' : rel_event, 'other_event_id' : e['id']}
+#                if event_id1 not in related_events_by_match: # don't track the same pair twice
+#                    related_events_by_match.append(event_id0)
 
-        continue # for debugging
         if type_id == 33: # 50/50
 
             if 'player' in e:
@@ -683,7 +681,7 @@ for file in os.listdir(directory):
                 under_pressure = 'False'
 
             if 'half_start' in e:
-                late_video_start = e['half_start']
+                late_video_start = e['half_start']['late_video_start']
             else:
                 late_video_start = 'False'
 
@@ -1217,566 +1215,649 @@ for file in os.listdir(directory):
 ### create dml files, one for each event type
 
 
-''' 
+
 # add event 33 to dml first
-dml = open('events_dml/33.sql', 'w')
-to_write = 'INSERT INTO event_33 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, out, outcome, counterpress) VALUES\n'
+if events['33'] != []:
+    dml = open('events_dml/33.sql', 'w')
+    to_write = 'INSERT INTO event_33 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, out, outcome, counterpress) VALUES\n'
 
-for e in events['33']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['under_pressure']) + ', ' + str(e['out']) + ', "' + str(e['outcome']) + '", ' + str(e['counterpress']) + ' ),\n'
+    for e in events['33']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['under_pressure']) + ', ' + str(e['out']) + ', \'' + str(e['outcome']) + '\', ' + str(e['counterpress']) + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
-# add event 24 to dml first (most tables reference countries as foreign key)
-dml = open('events_dml/24.sql', 'w')
-to_write = 'INSERT INTO event_24 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, off_camera, card) VALUES\n'
+# add event 24 to dml
+if events['24'] != []:
+    dml = open('events_dml/24.sql', 'w')
+    to_write = 'INSERT INTO event_24 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, off_camera, card) VALUES\n'
 
-for e in events['24']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['off_camera']) + ', "' + str(e['card']) + '" ),\n'
+    for e in events['24']:
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + str(e['off_camera']) + ', \'' + str(e['card']) + '\' ),\n'
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
 # add event 42 to dml first
-dml = open('events_dml/42.sql', 'w')
-to_write = 'INSERT INTO event_42 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, outcome) VALUES\n'
+if events['42'] != []:
+    dml = open('events_dml/42.sql', 'w')
+    to_write = 'INSERT INTO event_42 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, outcome) VALUES\n'
 
-for e in events['42']:
-    if e['outcome'] == 'null':
-        outcome = 'null'
-    else:
-        outcome = '"' + str(e['outcome']) + '"'
+    for e in events['42']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
 
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['under_pressure']) + ', ' + outcome + ' ),\n'
+        if e['outcome'] == 'null':
+            outcome = 'null'
+        else:
+            outcome = '\'' + str(e['outcome']) + '\''
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['under_pressure']) + ', ' + outcome + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
 
 # add event 2 to dml first
-dml = open('events_dml/2.sql', 'w')
-to_write = 'INSERT INTO event_2 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera, out, offensive, recovery_failure) VALUES\n'
+if events['2'] != []:
+    dml = open('events_dml/2.sql', 'w')
+    to_write = 'INSERT INTO event_2 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera, out, offensive, recovery_failure) VALUES\n'
 
-for e in events['2']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['under_pressure']) + ', '+ str(e['off_camera']) + ', ' + str(e['out']) + ', ' + str(e['offensive']) + ', ' + str(e['recovery_failure']) + ' ),\n'
-    
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+    for e in events['2']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
+
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['under_pressure']) + ', '+ str(e['off_camera']) + ', ' + str(e['out']) + ', ' + str(e['offensive']) + ', ' + str(e['recovery_failure']) + ' ),\n'
+        
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
+
 
 
 # add event 6 to dml
-dml = open('events_dml/6.sql', 'w')
-to_write = 'INSERT INTO event_6 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera, out, counterpress, deflection, offensive, save_block) VALUES\n'
+if events['6'] != []:
+    dml = open('events_dml/6.sql', 'w')
+    to_write = 'INSERT INTO event_6 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera, out, counterpress, deflection, offensive, save_block) VALUES\n'
 
-for e in events['6']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['out']) + ', ' + str(e['counterpress']) + ', ' + str(e['deflection']) + ', ' + str(e['offensive']) + ', ' + str(e['save_block']) + ' ),\n'
+    for e in events['6']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['out']) + ', ' + str(e['counterpress']) + ', ' + str(e['deflection']) + ', ' + str(e['offensive']) + ', ' + str(e['save_block']) + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
 # add event 43 to dml
-dml = open('events_dml/43.sql', 'w')
-to_write = 'INSERT INTO event_43 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, duration, under_pressure, end_location) VALUES\n'
+if events['43'] != []:
+    dml = open('events_dml/43.sql', 'w')
+    to_write = 'INSERT INTO event_43 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, duration, under_pressure, end_location) VALUES\n'
 
-for e in events['43']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['duration']) + ', ' + str(e['under_pressure']) + ', ' + str(e['end_location']) + ' ),\n'
+    for e in events['43']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
+        end_location = '\'(' + str(e['end_location'][0]) + ', ' + str(e['end_location'][1]) + ')\''
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['duration']) + ', ' + str(e['under_pressure']) + ', ' + end_location + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
 # add event 9 to dml
-dml = open('events_dml/9.sql', 'w')
-to_write = 'INSERT INTO event_9 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera, out, aerial_won, body_part) VALUES\n'
+if events['33'] != []:
+    dml = open('events_dml/9.sql', 'w')
+    to_write = 'INSERT INTO event_9 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera, out, aerial_won, body_part) VALUES\n'
 
-for e in events['9']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['out']) + ', ' + str(e['aerial_won']) + ', "' + str(e['body_part']) + '" ),\n'
+    for e in events['9']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['out']) + ', ' + str(e['aerial_won']) + ', \'' + str(e['body_part']) + '\' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
 # add event 3 to dml
-dml = open('events_dml/3.sql', 'w')
-to_write = 'INSERT INTO event_3 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera) VALUES\n'
+if events['3'] != []:
+    dml = open('events_dml/3.sql', 'w')
+    to_write = 'INSERT INTO event_3 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera) VALUES\n'
 
-for e in events['3']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ' ),\n'
+    for e in events['3']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
 # add event 14 to dml
-dml = open('events_dml/14.sql', 'w')
-to_write = 'INSERT INTO event_14 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, out, outcome, nutmeg, overrun, no_touch) VALUES\n'
+if events['14'] != []:
+    dml = open('events_dml/14.sql', 'w')
+    to_write = 'INSERT INTO event_14 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, out, outcome, nutmeg, overrun, no_touch) VALUES\n'
 
-for e in events['14']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['under_pressure']) + ', ' + str(e['out']) + ', "' + str(e['outcome']) + '", ' + str(e['nutmeg']) + ', ' + str(e['overrun']) + ', ' + str(e['no_touch']) + ' ),\n'
+    for e in events['14']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['under_pressure']) + ', ' + str(e['out']) + ', \'' + str(e['outcome']) + '\', ' + str(e['nutmeg']) + ', ' + str(e['overrun']) + ', ' + str(e['no_touch']) + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
 # add event 39 to dml
-dml = open('events_dml/39.sql', 'w')
-to_write = 'INSERT INTO event_39 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, off_camera, counterpress) VALUES\n'
+if events['39'] != []:
+    dml = open('events_dml/39.sql', 'w')
+    to_write = 'INSERT INTO event_39 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, off_camera, counterpress) VALUES\n'
 
-for e in events['39']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['off_camera']) + ', ' + str(e['counterpress']) + ' ),\n'
+    for e in events['39']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['off_camera']) + ', ' + str(e['counterpress']) + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
 # add event 4 to dml
-dml = open('events_dml/4.sql', 'w')
-to_write = 'INSERT INTO event_4 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera, counterpress, type, outcome) VALUES\n'
+if events['4'] != []:
+    dml = open('events_dml/4.sql', 'w')
+    to_write = 'INSERT INTO event_4 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera, counterpress, type, outcome) VALUES\n'
 
-for e in events['4']:
-    if e['type'] == 'null':
-        type_ = 'null'
-    else:
-        type_ = '"' + e['type'] + '"'
-    if e['outcome'] == 'null':
-        outcome = 'null'
-    else:
-        outcome = '"' + e['outcome'] + '"'
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['counterpress']) + ', ' + type_ + ', ' + outcome + ' ),\n'
+    for e in events['4']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+        if e['type'] == 'null':
+            type_ = 'null'
+        else:
+            type_ = '\'' + e['type'] + '\''
+        if e['outcome'] == 'null':
+            outcome = 'null'
+        else:
+            outcome = '\'' + e['outcome'] + '\''
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['counterpress']) + ', ' + type_ + ', ' + outcome + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
 # add event 37 to dml
-dml = open('events_dml/37.sql', 'w')
-to_write = 'INSERT INTO event_37 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera) VALUES\n'
-under_pressure = False
-off_camera = False
-for e in events['37']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ' ),\n'
-    if e['under_pressure'] == True:
-        under_pressure = True
-    if e['off_camera'] == True:
-        off_camera = True
-print(under_pressure)
-print(off_camera)
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+if events['37'] != []:
+    dml = open('events_dml/37.sql', 'w')
+    to_write = 'INSERT INTO event_37 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera) VALUES\n'
+
+    for e in events['37']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
+
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
 # add event 22 to dml
-dml = open('events_dml/22.sql', 'w')
-to_write = 'INSERT INTO event_22 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera, advantage, counterpress, offensive, penalty, card, type) VALUES\n'
+if events['22'] != []:
+    dml = open('events_dml/22.sql', 'w')
+    to_write = 'INSERT INTO event_22 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera, advantage, counterpress, offensive, penalty, card, type) VALUES\n'
 
-for e in events['22']:
-    if e['card'] == 'null':
-        card = 'null'
-    else:
-        card = '"' + e['card'] + '"'
-    if e['type'] == 'null':
-        type_ = 'null'
-    else:
-        type_ = '"' + e['type'] + '"'
+    for e in events['22']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
 
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['advantage']) + ', ' + str(e['counterpress']) + ', ' + str(e['offensive']) + ', ' + str(e['penalty']) + ', ' + card + ', ' + type_ + ' ),\n'
+        if e['card'] == 'null':
+            card = 'null'
+        else:
+            card = '\'' + e['card'] + '\''
+        if e['type'] == 'null':
+            type_ = 'null'
+        else:
+            type_ = '\'' + e['type'] + '\''
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['advantage']) + ', ' + str(e['counterpress']) + ', ' + str(e['offensive']) + ', ' + str(e['penalty']) + ', ' + card + ', ' + type_ + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
 # add event 21 to dml
-dml = open('events_dml/21.sql', 'w')
-to_write = 'INSERT INTO event_21 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera, advantage, defensive, penalty) VALUES\n'
+if events['21'] != []:
+    dml = open('events_dml/21.sql', 'w')
+    to_write = 'INSERT INTO event_21 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera, advantage, defensive, penalty) VALUES\n'
 
-for e in events['21']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['advantage']) + ', ' + str(e['defensive']) + ', ' + str(e['penalty']) + ' ),\n'
+    for e in events['21']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['advantage']) + ', ' + str(e['defensive']) + ', ' + str(e['penalty']) + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
 # add event 23 to dml
-dml = open('events_dml/23.sql', 'w')
-to_write = 'INSERT INTO event_23 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera, out, goalkeeper_position, technique, body_part, type, outcome) VALUES\n'
+if events['23'] != []:
+    dml = open('events_dml/23.sql', 'w')
+    to_write = 'INSERT INTO event_23 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera, out, goalkeeper_position, technique, body_part, type, outcome) VALUES\n'
 
-for e in events['23']:
-    if e['goalkeeper_position'] == 'null':
-        gkp = 'null'
-    else:
-        gkp = '"' + e['goalkeeper_position'] + '"'
-    if e['technique'] == 'null':
-        technique = 'null'
-    else:
-        technique = '"' + e['technique'] + '"'
-    if e['body_part'] == 'null':
-        body_part = 'null'
-    else:
-        body_part = '"' + e['body_part'] + '"'
-    if e['type'] == 'null':
-        type_ = 'null'
-    else:
-        type_ = '"' + e['type'] + '"'
-    if e['outcome'] == 'null':
-        outcome = 'null'
-    else:
-        outcome = '"' + e['outcome'] + '"'
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['out']) + ', ' + gkp + ', ' + technique + ', ' + body_part + ', ' + type_ + ', ' + outcome + ' ),\n'
+    for e in events['23']:
+        if e['location'] == 'null':
+            location = 'null'
+        else:
+            location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+        if e['goalkeeper_position'] == 'null':
+            gkp = 'null'
+        else:
+            gkp = '\'' + e['goalkeeper_position'] + '\''
+        if e['technique'] == 'null':
+            technique = 'null'
+        else:
+            technique = '\'' + e['technique'] + '\''
+        if e['body_part'] == 'null':
+            body_part = 'null'
+        else:
+            body_part = '\'' + e['body_part'] + '\''
+        if e['type'] == 'null':
+            type_ = 'null'
+        else:
+            type_ = '\'' + e['type'] + '\''
+        if e['outcome'] == 'null':
+            outcome = 'null'
+        else:
+            outcome = '\'' + e['outcome'] + '\''
+
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['out']) + ', ' + gkp + ', ' + technique + ', ' + body_part + ', ' + type_ + ', ' + outcome + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 # add event 34 to dml
-dml = open('events_dml/34.sql', 'w')
-to_write = 'INSERT INTO event_34 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, under_pressure) VALUES\n'
+if events['34'] != []:
+    dml = open('events_dml/34.sql', 'w')
+    to_write = 'INSERT INTO event_34 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, under_pressure) VALUES\n'
 
-for e in events['34']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['under_pressure']) + ' ),\n'
+    for e in events['34']:
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['under_pressure']) + ' ),\n'
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
 # add event 18 to dml
-dml = open('events_dml/18.sql', 'w')
-to_write = 'INSERT INTO event_18 (event_id, match_id, index, period, possession, possession_team_id, play_pattern, team_id, late_video_start) VALUES\n'
+if events['18'] != []:
+    dml = open('events_dml/18.sql', 'w')
+    to_write = 'INSERT INTO event_18 (event_id, match_id, index, period, possession, possession_team_id, play_pattern, team_id, late_video_start) VALUES\n'
 
-for e in events['18']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['late_video_start']) + ' ),\n'
+    for e in events['18']:
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['late_video_start']) + ' ),\n'
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
 # add event 40 to dml
-dml = open('events_dml/40.sql', 'w')
-to_write = 'INSERT INTO event_40 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, under_pressure, off_camera, in_chain) VALUES\n'
+if events['40'] != []:
+    dml = open('events_dml/40.sql', 'w')
+    to_write = 'INSERT INTO event_40 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, under_pressure, off_camera, in_chain) VALUES\n'
 
-for e in events['40']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['in_chain']) + ' ),\n'
+    for e in events['40']:
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['in_chain']) + ' ),\n'
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
 # add event 10 to dml
-dml = open('events_dml/10.sql', 'w')
-to_write = 'INSERT INTO event_10 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera, outcome) VALUES\n'
+if events['33'] != []:
+    dml = open('events_dml/10.sql', 'w')
+    to_write = 'INSERT INTO event_10 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera, outcome) VALUES\n'
 
-for e in events['10']:
-    if e['outcome'] == 'null':
-        outcome = 'null'
-    else:
-        outcome = '"' + e['outcome'] + '"'
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + outcome + ' ),\n'
+    for e in events['10']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+        if e['outcome'] == 'null':
+            outcome = 'null'
+        else:
+            outcome = '\'' + e['outcome'] + '\''
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + outcome + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
 # add event 38 to dml
-dml = open('events_dml/38.sql', 'w')
-to_write = 'INSERT INTO event_38 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera, out, aerial_won) VALUES\n'
+if events['38'] != []:
+    dml = open('events_dml/38.sql', 'w')
+    to_write = 'INSERT INTO event_38 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure, off_camera, out, aerial_won) VALUES\n'
 
-for e in events['38']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['out']) + ', ' + str(e['aerial_won']) + ' ),\n'
+    for e in events['38']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['out']) + ', ' + str(e['aerial_won']) + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
-dml = open('events_dml/8.sql', 'w')
 
 # add event 8 to dml
-to_write = 'INSERT INTO event_8 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location) VALUES\n'
+if events['8'] != []:
+    dml = open('events_dml/8.sql', 'w')
+    to_write = 'INSERT INTO event_8 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location) VALUES\n'
 
-for e in events['8']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ' ),\n'
+    for e in events['8']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
-dml = open('events_dml/20.sql', 'w')
 
 # add event 20 to dml
-to_write = 'INSERT INTO event_20 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location) VALUES\n'
+if events['20'] != []:
+    dml = open('events_dml/20.sql', 'w')
+    to_write = 'INSERT INTO event_20 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location) VALUES\n'
 
-for e in events['20']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ' ),\n'
+    for e in events['20']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
-dml = open('events_dml/25.sql', 'w')
 
 # add event 25 to dml
-to_write = 'INSERT INTO event_25 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location) VALUES\n'
+if events['25'] != []:
+    dml = open('events_dml/25.sql', 'w')
+    to_write = 'INSERT INTO event_25 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location) VALUES\n'
 
-for e in events['25']:
-    if e['position'] == 'null':
-        position = 'null'
-    else:
-        position = '"' + e['position'] + '"'
+    for e in events['25']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
 
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', ' + position + ', ' + str(e['location']) + ' ),\n'
+        if e['position'] == 'null':
+            position = 'null'
+        else:
+            position = '\'' + e['position'] + '\''
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', ' + position + ', ' + location + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
-dml = open('events_dml/30.sql', 'w')
 
 # add event 30 to dml
-to_write = 'INSERT INTO event_30 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, duration, under_pressure, off_camera, out, recipient, length, angle, height, end_location, assisted_shot_id, backheel, deflected, miscommunication, cross, cut_back, switch, shot_assist, goal_assist, body_part, type, outcome, technique) VALUES\n'
+if events['30'] != []:
+    dml = open('events_dml/30.sql', 'w')
+    to_write = 'INSERT INTO event_30 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, duration, under_pressure, off_camera, out, recipient, length, angle, height, end_location, assisted_shot_id, backheel, deflected, miscommunication, "cross", cut_back, switch, shot_assist, goal_assist, body_part, type, outcome, technique) VALUES\n'
 
-for e in events['30']:
-    if e['body_part'] == 'null':
-        body_part = 'null'
-    else:
-        body_part = '"' + e['body_part'] + '"'
-    if e['type'] == 'null':
-        type_ = 'null'
-    else:
-        type_ = '"' + e['type'] + '"'
-    if e['outcome'] == 'null':
-        outcome = 'null'
-    else:
-        outcome = '"' + e['outcome'] + '"'
-    if e['technique'] == 'null':
-        technique = 'null'
-    else:
-        technique = '"' + e['technique'] + '"'
+    for e in events['30']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
+        end_location = '\'(' + str(e['end_location'][0]) + ', ' + str(e['end_location'][1]) + ')\''
+        if e['body_part'] == 'null':
+            body_part = 'null'
+        else:
+            body_part = '\'' + e['body_part'] + '\''
+        if e['type'] == 'null':
+            type_ = 'null'
+        else:
+            type_ = '\'' + e['type'] + '\''
+        if e['outcome'] == 'null':
+            outcome = 'null'
+        else:
+            outcome = '\'' + e['outcome'] + '\''
+        if e['technique'] == 'null':
+            technique = 'null'
+        else:
+            technique = '\'' + e['technique'] + '\''
+        if e['assisted_shot_id'] == 'null':
+            assisted_shot_id = 'null'
+        else:
+            assisted_shot_id = '\'' + e['assisted_shot_id'] + '\''
 
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['duration']) + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['out']) + ', ' + str(e['recipient']) + ', ' + str(e['length']) + ', ' + str(e['angle']) + ', "' + str(e['height']) + '", ' + str(e['end_location']) + ', ' + str(e['assisted_shot_id']) + ', ' + str(e['backheel']) + ', ' + str(e['deflected']) + ', ' + str(e['miscommunication']) + ', ' + str(e['cross']) + ', ' + str(e['cut_back']) + ', ' + str(e['switch']) + ', ' + str(e['shot_assist']) + ', ' + str(e['goal_assist']) + ', ' + body_part + ', ' + type_ + ', ' + outcome + ', ' + technique + ' ),\n'
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['duration']) + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['out']) + ', ' + str(e['recipient']) + ', ' + str(e['length']) + ', ' + str(e['angle']) + ', \'' + str(e['height']) + '\', ' + end_location + ', ' + assisted_shot_id + ', ' + str(e['backheel']) + ', ' + str(e['deflected']) + ', ' + str(e['miscommunication']) + ', ' + str(e['cross']) + ', ' + str(e['cut_back']) + ', ' + str(e['switch']) + ', ' + str(e['shot_assist']) + ', ' + str(e['goal_assist']) + ', ' + body_part + ', ' + type_ + ', ' + outcome + ', ' + technique + ' ),\n'
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
-dml = open('events_dml/27.sql', 'w')
 
 # add event 27 to dml
-to_write = 'INSERT INTO event_27 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, off_camera) VALUES\n'
+if events['27'] != []:
+    dml = open('events_dml/27.sql', 'w')
+    to_write = 'INSERT INTO event_27 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, off_camera) VALUES\n'
 
-for e in events['27']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['off_camera']) + ' ),\n'
+    for e in events['27']:
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + str(e['off_camera']) + ' ),\n'
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
-dml = open('events_dml/26.sql', 'w')
 
 # add event 26 to dml
-to_write = 'INSERT INTO event_26 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, off_camera) VALUES\n'
+if events['26'] != []:
+    dml = open('events_dml/26.sql', 'w')
+    to_write = 'INSERT INTO event_26 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, off_camera) VALUES\n'
 
-for e in events['26']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['off_camera']) + ' ),\n'
+    for e in events['26']:
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + str(e['off_camera']) + ' ),\n'
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
-dml = open('events_dml/17.sql', 'w')
 
 # add event 17 to dml
-to_write = 'INSERT INTO event_17 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, duration, under_pressure, off_camera, counterpress) VALUES\n'
-under_pressure = False
-off_camera = False
-counterpress = False
-for e in events['17']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['duration']) + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['counterpress']) + ' ),\n'
-    if e['under_pressure']:
-        under_pressure = True
-    if e['off_camera']:
-        off_camera = True
-    if e['counterpress']:
-        counterpress = True
-print(under_pressure)
-print(off_camera)
-print(counterpress)
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+if events['17'] != []:
+    dml = open('events_dml/17.sql', 'w')
+    to_write = 'INSERT INTO event_17 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, duration, under_pressure, off_camera, counterpress) VALUES\n'
+
+    for e in events['17']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
+
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['duration']) + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['counterpress']) + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
-dml = open('events_dml/41.sql', 'w')
 
 # add event 41 to dml
-to_write = 'INSERT INTO event_41 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, location, off_camera) VALUES\n'
+if events['41'] != []:
+    dml = open('events_dml/41.sql', 'w')
+    to_write = 'INSERT INTO event_41 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, location, off_camera) VALUES\n'
 
-for e in events['41']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['location']) + ', ' + str(e['off_camera']) + ' ),\n'
+    for e in events['41']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + location + ', ' + str(e['off_camera']) + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
-dml = open('events_dml/28.sql', 'w')
 
 # add event 28 to dml
-to_write = 'INSERT INTO event_28 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure) VALUES\n'
+if events['28'] != []:
+    dml = open('events_dml/28.sql', 'w')
+    to_write = 'INSERT INTO event_28 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, under_pressure) VALUES\n'
 
-for e in events['28']:
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['under_pressure']) + ' ),\n'
+    for e in events['28']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['under_pressure']) + ' ),\n'
+
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
-dml = open('events_dml/16.sql', 'w')
 
 # add event 16 to dml
-to_write = 'INSERT INTO event_16 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, duration, under_pressure, off_camera, out, key_pass_id, end_location, aerial_won, follows_dribble, first_time, open_goal, statsbomb_xg, deflected, technique, body_part, type, outcome ) VALUES\n'
+if events['16'] != []:
+    dml = open('events_dml/16.sql', 'w')
+    to_write = 'INSERT INTO event_16 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, location, duration, under_pressure, off_camera, out, key_pass_id, end_location, aerial_won, follows_dribble, first_time, open_goal, statsbomb_xg, deflected, technique, body_part, type, outcome ) VALUES\n'
 
-for e in events['16']:
-    if e['technique'] == 'null':
-        technique = 'null'
-    else:
-        technique = '"' + e['technique'] + '"'
-    if e['body_part'] == 'null':
-        body_part = 'null'
-    else:
-        body_part = '"' + e['body_part'] + '"'
-    if e['type'] == 'null':
-        type_ = 'null'
-    else:
-        type_ = '"' + e['type'] + '"'
-    if e['outcome'] == 'null':
-        outcome = 'null'
-    else:
-        outcome = '"' + e['outcome'] + '"'
+    for e in events['16']:
+        location = '\'(' + str(e['location'][0]) + ', ' + str(e['location'][1]) + ')\''
+        end_location = '\'(' + str(e['end_location'][0]) + ', ' + str(e['end_location'][1]) + ')\''
+        if e['technique'] == 'null':
+            technique = 'null'
+        else:
+            technique = '\'' + e['technique'] + '\''
+        if e['body_part'] == 'null':
+            body_part = 'null'
+        else:
+            body_part = '\'' + e['body_part'] + '\''
+        if e['type'] == 'null':
+            type_ = 'null'
+        else:
+            type_ = '\'' + e['type'] + '\''
+        if e['outcome'] == 'null':
+            outcome = 'null'
+        else:
+            outcome = '\'' + e['outcome'] + '\''
+        if e['key_pass_id'] == 'null':
+            key_pass_id = 'null'
+        else:
+            key_pass_id = '\'' + e['key_pass_id'] + '\''
 
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['location']) + ', ' + str(e['duration']) + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['out']) + ', ' + str(e['key_pass_id']) + ', ' + str(e['end_location']) + ', ' + str(e['aerial_won']) + ', ' + str(e['follows_dribble']) + ', ' + str(e['first_time']) + ', ' + str(e['open_goal']) + ', ' + str(e['statsbomb_xg']) + ', ' + str(e['deflected']) + ', ' + technique + ', ' + body_part + ', ' + type_ + ', ' + outcome + ' ),\n'
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + location + ', ' + str(e['duration']) + ', ' + str(e['under_pressure']) + ', ' + str(e['off_camera']) + ', ' + str(e['out']) + ', ' + key_pass_id + ', ' + end_location + ', ' + str(e['aerial_won']) + ', ' + str(e['follows_dribble']) + ', ' + str(e['first_time']) + ', ' + str(e['open_goal']) + ', ' + str(e['statsbomb_xg']) + ', ' + str(e['deflected']) + ', ' + technique + ', ' + body_part + ', ' + type_ + ', ' + outcome + ' ),\n'
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+    to_write = to_write[:-2] + ';\n\n'
+    # add foreign key constraint after event_16 is populated
+    to_write += 'ALTER TABLE event_30 ADD CONSTRAINT fk_assisted_shot FOREIGN KEY (assisted_shot_id) REFERENCES event_16(event_id) ON DELETE CASCADE;'
+    dml.write(to_write)
+    dml.close()
 
 
-dml = open('events_dml/35.sql', 'w')
 
 # add event 35 to dml
-to_write = 'INSERT INTO event_35 (event_id, match_id, index, team_id, formation, lineup) VALUES\n'
+if events['35'] != []:
+    dml = open('events_dml/35.sql', 'w')
+    to_write = 'INSERT INTO event_35 (event_id, match_id, index, team_id, formation, lineup) VALUES\n'
 
-for e in events['35']:
-    lineup = 'ARRAY['
-    for p in e['lineup']:
-        player_id = str(p['player_id'])
-        position = '"' + p['position'] + '"'
-        jersey_number = str(p['jersey_number'])
-        player = '\'(' + player_id + ', ' + position + ', ' + jersey_number + ')\', '
+    for e in events['35']:
+        lineup = 'ARRAY['
+        for p in e['lineup']:
+            player_id = str(p['player_id'])
+            position = '\'' + p['position'] + '\''
+            jersey_number = str(p['jersey_number'])
+            player = '(' + player_id + ', ' + position + ', ' + jersey_number + ')::lineup, '
 
-        lineup += player
+            lineup += player
 
-    lineup = lineup[:-2] + ']'
+        lineup = lineup[:-2] + ']'
 
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['team_id']) + ', ' + str(e['formation']) + ', ' + lineup + ' ),\n'
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['team_id']) + ', ' + str(e['formation']) + ', ' + lineup + ' ),\n'
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
-dml = open('events_dml/19.sql', 'w')
 
 # add event 19 to dml
-to_write = 'INSERT INTO event_19 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, off_camera, replacement, outcome) VALUES\n'
+if events['19'] != []:
+    dml = open('events_dml/19.sql', 'w')
+    to_write = 'INSERT INTO event_19 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, player_id, position, off_camera, replacement, outcome) VALUES\n'
 
-for e in events['19']:
-    if e['outcome'] == 'null':
-        outcome = 'null'
-    else:
-        outcome = '"' + e['outcome'] + '"'
+    for e in events['19']:
+        if e['outcome'] == 'null':
+            outcome = 'null'
+        else:
+            outcome = '\'' + e['outcome'] + '\''
 
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', "' + str(e['position']) + '", ' + str(e['off_camera']) + ', ' + str(e['replacement']) + ', ' + outcome + ' ),\n'
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['player_id']) + ', \'' + str(e['position']) + '\', ' + str(e['off_camera']) + ', ' + str(e['replacement']) + ', ' + outcome + ' ),\n'
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
 
-dml = open('events_dml/36.sql', 'w')
 
 # add event 36 to dml
-to_write = 'INSERT INTO event_36 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, formation, lineup) VALUES\n'
+if events['36'] != []:
+    dml = open('events_dml/36.sql', 'w')
+    to_write = 'INSERT INTO event_36 (event_id, match_id, index, period, timestamp, possession, possession_team_id, play_pattern, team_id, formation, lineup) VALUES\n'
 
-for e in events['36']:
-    lineup = 'ARRAY['
-    for p in e['lineup']:
-        player_id = str(p['player_id'])
-        position = '"' + p['position'] + '"'
-        jersey_number = str(p['jersey_number'])
-        player = '\'(' + player_id + ', ' + position + ', ' + jersey_number + ')\', '
+    for e in events['36']:
+        lineup = 'ARRAY['
+        for p in e['lineup']:
+            player_id = str(p['player_id'])
+            position = '\'' + p['position'] + '\''
+            jersey_number = str(p['jersey_number'])
+            player = '(' + player_id + ', ' + position + ', ' + jersey_number + ')::lineup, '
 
-        lineup += player
+            lineup += player
 
-    lineup = lineup[:-2] + ']'
+        lineup = lineup[:-2] + ']'
 
-    to_write += '( "' + str(e['event_id']) + '", ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', "' + str(e['timestamp']) + '", ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', "' + str(e['play_pattern']) + '", ' + str(e['team_id']) + ', ' + str(e['formation']) + ', ' + lineup + ' ),\n'
+        to_write += '( \'' + str(e['event_id']) + '\', ' + str(e['match_id']) + ', ' + str(e['index']) + ', ' + str(e['period']) + ', \'' + str(e['timestamp']) + '\', ' + str(e['possession']) + ', ' + str(e['possession_team_id']) + ', \'' + str(e['play_pattern']) + '\', ' + str(e['team_id']) + ', ' + str(e['formation']) + ', ' + lineup + ' ),\n'
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
-'''
-dml = open('events_dml/related_events.sql', 'w')
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
+
 
 
 # add related events to dml
-to_write = 'INSERT INTO related_events (event_id_1, event_id_2) VALUES\n'
+if related_events != []:
+    dml = open('events_dml/related_events.sql', 'w')
+    to_write = 'INSERT INTO related_events (event_id_1, event_id_2) VALUES\n'
 
-for e in related_events:
-    to_write += '( "' + str(e['event_id']) + '", "' + str(e['other_event_id']) + '" ),\n'
+    for e in related_events:
+        to_write += '( \'' + str(e['event_id']) + '\', \'' + str(e['other_event_id']) + '\' ),\n'
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
-dml.close()
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
+    dml.close()
 
-'''
+
 # add events by type to dml
-dml = open('events_dml/events_by_type.sql', 'w')
-to_write = 'INSERT INTO events_by_type (event_id, table_name) VALUES\n'
+if events_by_type != []:
+    dml = open('events_dml/events_by_type.sql', 'w')
+    to_write = 'INSERT INTO events_by_type (event_id, table_name) VALUES\n'
 
-for e in events_by_type:
-    to_write += '( "' + str(e['event_id']) + '", "event_' + str(e['type']) + '" ),\n'
+    for e in events_by_type:
+        to_write += '( \'' + str(e['event_id']) + '\', \'event_' + str(e['type']) + '\' ),\n'
 
-to_write = to_write[:-2] + ';\n\n'
-dml.write(to_write)
+    to_write = to_write[:-2] + ';\n\n'
+    dml.write(to_write)
 
-dml.close()
-'''
+    dml.close()
+

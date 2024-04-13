@@ -87,8 +87,8 @@ CREATE TABLE IF NOT EXISTS competitions (
 
 CREATE TABLE IF NOT EXISTS matches (
     match_id                    integer PRIMARY KEY,
-    match_date                        date,
-    kick_off                     time, -- game start time
+    match_date                  date,
+    kick_off                    time, -- game start time
     competition_id              integer REFERENCES competitions (competition_id) ON DELETE CASCADE,
     season                      char(9), -- yyyy/yyyy
     home_team_id                integer REFERENCES teams (team_id) ON DELETE CASCADE,
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS event_33 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -146,7 +146,7 @@ CREATE TABLE IF NOT EXISTS event_33 (
     location                point,
     under_pressure          boolean,
     out                     boolean,
-    outcome                 varchar(20),
+    outcome                 varchar(21),
     counterpress            boolean
 );
 
@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS event_24 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -175,7 +175,7 @@ CREATE TABLE IF NOT EXISTS event_42 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -194,7 +194,7 @@ CREATE TABLE IF NOT EXISTS event_2 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -216,7 +216,7 @@ CREATE TABLE IF NOT EXISTS event_6 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -240,7 +240,7 @@ CREATE TABLE IF NOT EXISTS event_43 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -260,7 +260,7 @@ CREATE TABLE IF NOT EXISTS event_9 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -282,7 +282,7 @@ CREATE TABLE IF NOT EXISTS event_3 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -301,7 +301,7 @@ CREATE TABLE IF NOT EXISTS event_14 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -325,7 +325,7 @@ CREATE TABLE IF NOT EXISTS event_39 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -344,7 +344,7 @@ CREATE TABLE IF NOT EXISTS event_4 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -366,7 +366,7 @@ CREATE TABLE IF NOT EXISTS event_37 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -385,7 +385,7 @@ CREATE TABLE IF NOT EXISTS event_22 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -410,7 +410,7 @@ CREATE TABLE IF NOT EXISTS event_21 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -432,7 +432,7 @@ CREATE TABLE IF NOT EXISTS event_23 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -446,7 +446,7 @@ CREATE TABLE IF NOT EXISTS event_23 (
     goalkeeper_position     varchar(20),
     technique               varchar(20),
     body_part               varchar(20),
-    type                    varchar(20),
+    type                    varchar(21),
     outcome                 varchar(20)
 );
 
@@ -457,7 +457,7 @@ CREATE TABLE IF NOT EXISTS event_34 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -486,7 +486,7 @@ CREATE TABLE IF NOT EXISTS event_40 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -505,7 +505,7 @@ CREATE TABLE IF NOT EXISTS event_10 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -525,7 +525,7 @@ CREATE TABLE IF NOT EXISTS event_38 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -546,7 +546,7 @@ CREATE TABLE IF NOT EXISTS event_8 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -563,7 +563,7 @@ CREATE TABLE IF NOT EXISTS event_20 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -580,7 +580,7 @@ CREATE TABLE IF NOT EXISTS event_25 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -597,7 +597,7 @@ CREATE TABLE IF NOT EXISTS event_30 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -636,7 +636,7 @@ CREATE TABLE IF NOT EXISTS event_27 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -653,7 +653,7 @@ CREATE TABLE IF NOT EXISTS event_26 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -670,7 +670,7 @@ CREATE TABLE IF NOT EXISTS event_17 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -691,7 +691,7 @@ CREATE TABLE IF NOT EXISTS event_41 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -707,7 +707,7 @@ CREATE TABLE IF NOT EXISTS event_28 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -725,7 +725,7 @@ CREATE TABLE IF NOT EXISTS event_16 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -751,12 +751,6 @@ CREATE TABLE IF NOT EXISTS event_16 (
     outcome                 varchar(20)
 );
 
--- add foreign key constrain to event_30
---ALTER TABLE event_30 DROP CONSTRAINT IF EXISTS fk_assisted_shot;
-ALTER TABLE event_30
-    ADD CONSTRAINT fk_assisted_shot FOREIGN KEY (assisted_shot_id)
-        REFERENCES event_16 (event_id) ON DELETE CASCADE;
-
 
 -- Starting XI
 CREATE TABLE IF NOT EXISTS event_35 (
@@ -776,7 +770,7 @@ CREATE TABLE IF NOT EXISTS event_19 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),
@@ -795,7 +789,7 @@ CREATE TABLE IF NOT EXISTS event_36 (
     match_id                integer REFERENCES matches (match_id) ON DELETE CASCADE,
     index                   integer,
     period                  integer, -- constraints: 1-5
-    timestamp               timestamp,
+    timestamp               interval,
     possession              integer,
     possession_team_id      integer REFERENCES teams (team_id) ON DELETE CASCADE,
     play_pattern            varchar(14),

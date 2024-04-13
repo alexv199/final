@@ -34,12 +34,22 @@ for file_path in match_files:
     data = json.load(file)
     for match in data:
         matches.append(match)
+
+        # get teams
+        home_team = {'team_id' : match['home_team']['home_team_id'], 'name' : match['home_team']['home_team_name'], 'gender' : match['home_team']['home_team_gender'], 'country' : match['home_team']['country']['name']}
+        if home_team not in teams: # check for new team
+            teams.append(home_team)
+
+        away_team = {'team_id' : match['away_team']['away_team_id'], 'name' : match['away_team']['away_team_name'], 'gender' : match['away_team']['away_team_gender'], 'country' : match['away_team']['country']['name']}
+        if away_team not in teams:
+            teams.append(away_team)
+
+
+        # get other data
         team_types = ['home_team', 'away_team']
         for team_type in team_types:
             if team_type in match:
                 team = match[team_type]
-                if team not in teams: # check for new team
-                    teams.append(team)
 
 
                 if 'managers' in team:
@@ -137,49 +147,13 @@ dml.write(to_write)
 
 
 
-# teams are duplicated, need to remove duplicates
-home_teams = []
-away_teams = []
-
-for team in teams: # split them into home and away
-    if 'home_team_id' in team:
-        home_teams.append(team)
-    elif 'away_team_id' in team:
-        away_teams.append(team)
-
-teams = home_teams # remake teams list
-unique_away_teams = []
-
-# it's possible that some away teams never appeared as home teams, so check
-for team in away_teams:
-    away_id = team['away_team_id']
-    in_home = [home_team for home_team in teams if home_team['home_team_id'] == away_id]
-    #in_home = filter(lambda home_team : home_team['home_team_id'] == away_id, teams)
-    if len(in_home) == 0:
-        unique_away_teams.append(team)
-
-
 # add teams to dml
-to_write = 'INSERT INTO teams (team_id, name, gender, "group", country) VALUES\n'
+to_write = 'INSERT INTO teams (team_id, name, gender, country) VALUES\n'
 
 # add home teams
 for team in teams:
-    group = str(team['home_team_group'])
-    if group != 'None':
-        group = '\'' + group + '\''
-    else:
-        group = 'null'
-    to_write += '( ' + str(team['home_team_id']) + ', \'' + team['home_team_name'] + '\', \'' + team['home_team_gender'] + '\', ' + group + ', \'' + str(team['country']['name']) + '\' ),\n'
-
-# add the away teams that did not appear in the home teams list
-for team in unique_away_teams:
-    group = str(team['away_team_group'])
-    if group != 'None':
-        group = '\'' + group + '\''
-    else:
-        group = 'null'
-    to_write += '( ' + str(team['away_team_id']) + ', \'' + team['away_team_name'] + '\', \'' + team['away_team_gender'] + '\', ' + group + ', \'' + str(team['country']['name']) + '\' ),\n'
-
+    
+    to_write += '( ' + str(team['team_id']) + ', \'' + team['name'] + '\', \'' + team['gender'] + '\', \'' + str(team['country']) + '\' ),\n'
 
 to_write = to_write[:-2] + ';\n\n'
 dml.write(to_write)
@@ -187,7 +161,7 @@ dml.write(to_write)
 
 
 # add competitions to dml
-to_write = 'INSERT INTO competitions (competition_id, country, competition_name, competition_gender, competition_youth, competition_international) VALUES\n'
+to_write = 'INSERT INTO competitions (competition_id, country, name, gender, youth, international) VALUES\n'
 
 for competition in competitions:
 
@@ -199,7 +173,7 @@ dml.write(to_write)
 
 
 # add matches to dml
-to_write = 'INSERT INTO matches (match_id, match_date, kick_off, competition_id, season, home_team_id, away_team_id, home_score, away_score, match_week, competition_stage, stadium_id, referee_id) VALUES\n'
+to_write = 'INSERT INTO matches (match_id, match_date, kick_off, competition_id, season, home_team_id, away_team_id, home_score, away_score, match_week, competition_stage_name, stadium_id, referee_id) VALUES\n'
 
 for match in matches:
     stadium_id = 'null'
@@ -245,10 +219,36 @@ dml.write(to_write)
 to_write = 'INSERT INTO players (player_id, name, nickname, country) VALUES\n'
 
 for player in players:
+    name = player['name']
+    if "'" in name:
+        parts = name.split("'")
+        name = ''
+        for p in parts:
+            if p != '':
+                name += p + '\'\''
+        name = name[:-2]
+
     nickname = 'null'
     if str(player['nickname']) != 'None':
-        nickname = '\'' + player['nickname'] +'\''
-    to_write += '( ' + str(player['player_id']) + ', \'' + player['name'] + '\', ' + nickname + ', \'' + str(player['country']) + '\' ),\n'
+        nickname = player['nickname']
+        if "'" in nickname:
+            parts = nickname.split("'")
+            nickname = ''
+            for p in parts:
+                if p != '':
+                    nickname += p + '\'\''
+            nickname = nickname[:-2]
+
+    country = player['country']
+    if "'" in country:
+        parts = country.split("'")
+        country = ''
+        for p in parts:
+            if p != '':
+                country += p + '\'\''
+        country = country[:-2]
+
+    to_write += '( ' + str(player['player_id']) + ', \'' + name + '\', \'' + nickname + '\', \'' + country + '\' ),\n'
 
 to_write = to_write[:-2] + ';\n\n'
 dml.write(to_write)
@@ -268,7 +268,7 @@ for match in lineups:
                 type_ = '\'' + c['card_type'] + '\''
                 reason = '\'' + str(c['reason']) + '\''
                 period = str(c['period'])
-                card = '\'(' + time + ', ' + type_ + ', ' + reason + ', ' + period + ')\', '
+                card = '(' + time + ', ' + type_ + ', ' + reason + ', ' + period + ')::card, '
 
                 cards += card
 
@@ -280,13 +280,33 @@ for match in lineups:
             positions = 'ARRAY['
             for p in player['positions']:
                 position_name = '\'' + p['position'] + '\''
-                from_ = '\'' + str(p['from']) + '\''
-                to = '\'' + str(p['to']) + '\''
+
+                from_ = str(p['from'])
+                if from_ == 'None':
+                    from_ = 'null'
+                else:
+                    from_ = '\'' + from_ + '\''
+
+                to = str(p['to'])
+                if to == 'None':
+                    to = 'null'
+                else:
+                    to = '\'' + to + '\''
+
                 from_period = str(p['from_period'])
+                if from_period == 'None':
+                    from_period = 'null'
                 to_period = str(p['to_period'])
+                if to_period == 'None':
+                    to_period = 'null'
                 start_reason = '\'' + p['start_reason'] + '\''
+                if start_reason == 'None':
+                    start_reason = 'null'
                 end_reason = '\'' + p['end_reason'] + '\''
-                position = '\'(' + position_name + ', ' + from_ + ', ' + to + ', ' + from_period + ', ' + to_period + ', ' + start_reason + ', ' + end_reason + ')\', '
+                if end_reason == 'None':
+                    end_reason = 'null'
+
+                position = '(' + position_name + ', ' + from_ + ', ' + to + ', ' + from_period + ', ' + to_period + ', ' + start_reason + ', ' + end_reason + ')::"position", '
 
                 positions += position
 
