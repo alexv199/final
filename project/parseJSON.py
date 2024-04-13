@@ -105,7 +105,7 @@ dml = open('dml.sql', 'w')
 to_write = 'INSERT INTO referees (referee_id, name, country) VALUES\n'
 
 for referee in referees:
-    to_write += '( ' + str(referee['id']) + ', "' + referee['name'] + '", "' + str(referee['country']['name']) + '" ),\n'
+    to_write += '( ' + str(referee['id']) + ', \'' + referee['name'] + '\', \'' + str(referee['country']['name']) + '\' ),\n'
 
 to_write = to_write[:-2] + ';\n\n'
 dml.write(to_write)
@@ -115,7 +115,7 @@ dml.write(to_write)
 to_write = 'INSERT INTO stadiums (stadium_id, name, country) VALUES\n'
 
 for stadium in stadiums:
-    to_write += '( ' + str(stadium['id']) + ', "' + stadium['name'] + '", "' + str(stadium['country']['name']) + '" ),\n'
+    to_write += '( ' + str(stadium['id']) + ', \'' + stadium['name'] + '\', \'' + str(stadium['country']['name']) + '\' ),\n'
 
 to_write = to_write[:-2] + ';\n\n'
 dml.write(to_write)
@@ -127,10 +127,10 @@ to_write = 'INSERT INTO managers (manager_id, name, nickname, dob, country) VALU
 for manager in managers:
     nickname = str(manager['nickname'])
     if nickname != 'None':
-        nickname = '"' + nickname + '"'
+        nickname = '\'' + nickname + '\''
     else:
         nickname = 'null'
-    to_write += '( ' + str(manager['id']) + ', "' + manager['name'] + '", ' + nickname + ', "' + manager['dob'] + '", "' + str(manager['country']['name']) + '" ),\n'
+    to_write += '( ' + str(manager['id']) + ', \'' + manager['name'] + '\', ' + nickname + ', \'' + manager['dob'] + '\', \'' + str(manager['country']['name']) + '\' ),\n'
 
 to_write = to_write[:-2] + ';\n\n'
 dml.write(to_write)
@@ -160,25 +160,25 @@ for team in away_teams:
 
 
 # add teams to dml
-to_write = 'INSERT INTO teams (team_id, name, gender, group, country) VALUES\n'
+to_write = 'INSERT INTO teams (team_id, name, gender, "group", country) VALUES\n'
 
 # add home teams
 for team in teams:
     group = str(team['home_team_group'])
     if group != 'None':
-        group = '"' + group + '"'
+        group = '\'' + group + '\''
     else:
         group = 'null'
-    to_write += '( ' + str(team['home_team_id']) + ', "' + team['home_team_name'] + '", "' + team['home_team_gender'] + '", ' + group + ', "' + str(team['country']['name']) + '" ),\n'
+    to_write += '( ' + str(team['home_team_id']) + ', \'' + team['home_team_name'] + '\', \'' + team['home_team_gender'] + '\', ' + group + ', \'' + str(team['country']['name']) + '\' ),\n'
 
 # add the away teams that did not appear in the home teams list
 for team in unique_away_teams:
     group = str(team['away_team_group'])
     if group != 'None':
-        group = '"' + group + '"'
+        group = '\'' + group + '\''
     else:
         group = 'null'
-    to_write += '( ' + str(team['away_team_id']) + ', "' + team['away_team_name'] + '", "' + team['away_team_gender'] + '", ' + group + ', "' + str(team['country']['name']) + '" ),\n'
+    to_write += '( ' + str(team['away_team_id']) + ', \'' + team['away_team_name'] + '\', \'' + team['away_team_gender'] + '\', ' + group + ', \'' + str(team['country']['name']) + '\' ),\n'
 
 
 to_write = to_write[:-2] + ';\n\n'
@@ -191,7 +191,7 @@ to_write = 'INSERT INTO competitions (competition_id, country, competition_name,
 
 for competition in competitions:
 
-    to_write += '( ' + str(competition['competition_id']) + ', "' + competition['country_name'] + '", "' + competition['competition_name'] + '", "' + competition['competition_gender'] + '", ' + str(competition['competition_youth']) + ', ' + str(competition['competition_international']) + ' ),\n'
+    to_write += '( ' + str(competition['competition_id']) + ', \'' + competition['country_name'] + '\', \'' + competition['competition_name'] + '\', \'' + competition['competition_gender'] + '\', ' + str(competition['competition_youth']) + ', ' + str(competition['competition_international']) + ' ),\n'
 
 to_write = to_write[:-2] + ';\n\n'
 dml.write(to_write)
@@ -209,7 +209,7 @@ for match in matches:
     if 'referee' in match: # not an attribute of every match
         referee_id = str(match['referee']['id'])
 
-    to_write += '( ' + str(match['match_id']) + ', "' + match['match_date'] + '", "' + match['kick_off'] + '", ' + str(match['competition']['competition_id']) + ', "' + str(match['season']['season_name']) + '", ' + str(match['home_team']['home_team_id']) + ', ' + str(match['away_team']['away_team_id']) + ', ' + str(match['home_score']) + ', ' + str(match['away_score']) + ', ' + str(match['match_week']) + ', "' + str(match['competition_stage']['name']) + '", ' + stadium_id + ', ' + referee_id + ' ),\n'
+    to_write += '( ' + str(match['match_id']) + ', \'' + match['match_date'] + '\', \'' + match['kick_off'] + '\', ' + str(match['competition']['competition_id']) + ', \'' + str(match['season']['season_name']) + '\', ' + str(match['home_team']['home_team_id']) + ', ' + str(match['away_team']['away_team_id']) + ', ' + str(match['home_score']) + ', ' + str(match['away_score']) + ', ' + str(match['match_week']) + ', \'' + str(match['competition_stage']['name']) + '\', ' + stadium_id + ', ' + referee_id + ' ),\n'
 
 to_write = to_write[:-2] + ';\n\n'
 dml.write(to_write)
@@ -247,8 +247,8 @@ to_write = 'INSERT INTO players (player_id, name, nickname, country) VALUES\n'
 for player in players:
     nickname = 'null'
     if str(player['nickname']) != 'None':
-        nickname = '"' + player['nickname'] +'"'
-    to_write += '( ' + str(player['player_id']) + ', "' + player['name'] + '", ' + nickname + ', "' + str(player['country']) + '" ),\n'
+        nickname = '\'' + player['nickname'] +'\''
+    to_write += '( ' + str(player['player_id']) + ', \'' + player['name'] + '\', ' + nickname + ', \'' + str(player['country']) + '\' ),\n'
 
 to_write = to_write[:-2] + ';\n\n'
 dml.write(to_write)
@@ -264,9 +264,9 @@ for match in lineups:
         else:
             cards = 'ARRAY['
             for c in player['cards']:
-                time = '"' + str(c['time']) + '"'
-                type_ = '"' + c['card_type'] + '"'
-                reason = '"' + str(c['reason']) + '"'
+                time = '\'' + str(c['time']) + '\''
+                type_ = '\'' + c['card_type'] + '\''
+                reason = '\'' + str(c['reason']) + '\''
                 period = str(c['period'])
                 card = '\'(' + time + ', ' + type_ + ', ' + reason + ', ' + period + ')\', '
 
@@ -279,13 +279,13 @@ for match in lineups:
         else:
             positions = 'ARRAY['
             for p in player['positions']:
-                position_name = '"' + p['position'] + '"'
-                from_ = '"' + str(p['from']) + '"'
-                to = '"' + str(p['to']) + '"'
+                position_name = '\'' + p['position'] + '\''
+                from_ = '\'' + str(p['from']) + '\''
+                to = '\'' + str(p['to']) + '\''
                 from_period = str(p['from_period'])
                 to_period = str(p['to_period'])
-                start_reason = '"' + p['start_reason'] + '"'
-                end_reason = '"' + p['end_reason'] + '"'
+                start_reason = '\'' + p['start_reason'] + '\''
+                end_reason = '\'' + p['end_reason'] + '\''
                 position = '\'(' + position_name + ', ' + from_ + ', ' + to + ', ' + from_period + ', ' + to_period + ', ' + start_reason + ', ' + end_reason + ')\', '
 
                 positions += position
