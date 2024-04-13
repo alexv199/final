@@ -148,28 +148,37 @@ ORDER BY num_intended_recipient DESC
 
 
 
---q8
+-- q8
 /*
 SELECT
     t.name AS team_name, COUNT(*) AS num_of_through_balls
 FROM
     teams AS t
-    INNER JOIN (
+    INNER JOIN LATERAL (
         SELECT
-            e.team_id
+            team_id
         FROM
             event_30 AS e
-            INNER JOIN matches AS m ON e.match_id = m.match_id
-            INNER JOIN competitions AS c ON m.competition_id = c.competition_id
-        WHERE
-            c.name = 'La Liga' AND
-            m.season = '2020/2021' AND
-            e.type = 'Through Ball'
-    ) AS tb ON tb.team_id = t.team_id
+            INNER JOIN LATERAL (
+                SELECT
+                    m.match_id, m.season
+                FROM
+                    matches AS m
+                    INNER JOIN LATERAL (
+                        SELECT
+                            competition_id
+                        FROM competitions AS c
+                        WHERE c.name = 'La Liga'
+                    ) AS c ON m.competition_id = c.competition_id
+                WHERE m.season = '2020/2021'
+            ) AS m ON e.match_id = m.match_id
+        WHERE e.type = 'Through Ball'
+    ) AS e ON t.team_id = e.team_id
 GROUP BY t.name
 ORDER BY num_of_through_balls DESC
 ;
 */
+
 
 --q9
 /*
