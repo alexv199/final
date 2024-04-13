@@ -168,12 +168,10 @@ FROM
                         FROM competitions AS c
                         WHERE c.name = 'La Liga'
                     ) AS t ON m.competition_id = t.competition_id
-                WHERE m.season IN ('2020/2021', '2019/2020', '2018/2019')
             ) AS t ON e.match_id = t.match_id
-        WHERE e.outcome = 'Successful'
+        WHERE e.outcome = 'Complete'
     ) AS t ON p.player_id = t.player_id
 GROUP BY p.name
-HAVING COUNT(*) >= 1
 ORDER BY num_of_successful_dribbles DESC
 ;
 */

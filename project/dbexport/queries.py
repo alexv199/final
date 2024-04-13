@@ -493,7 +493,34 @@ def Q_9(conn, execution_time):
     #==========================================================================
     # Enter QUERY within the quotes:
 
-    query = """ """
+    query = """
+            SELECT
+                p.name, COUNT(*) AS num_of_successful_dribbles
+            FROM
+                players AS p
+                INNER JOIN LATERAL (
+                    SELECT
+                        player_id
+                    FROM
+                        event_14 AS e
+                        INNER JOIN LATERAL (
+                            SELECT
+                                m.match_id, m.season
+                            FROM
+                                matches AS m
+                                INNER JOIN LATERAL (
+                                    SELECT
+                                        competition_id
+                                    FROM competitions AS c
+                                    WHERE c.name = 'La Liga'
+                                ) AS t ON m.competition_id = t.competition_id
+                        ) AS t ON e.match_id = t.match_id
+                    WHERE e.outcome = 'Complete'
+                ) AS t ON p.player_id = t.player_id
+            GROUP BY p.name
+            ORDER BY num_of_successful_dribbles DESC
+            ;
+            """
 
     #==========================================================================
 
@@ -515,7 +542,33 @@ def Q_10(conn, execution_time):
     #==========================================================================
     # Enter QUERY within the quotes:
 
-    query = """ """
+    query = """
+            SELECT
+                p.name, COUNT(*) AS num_of_dribbles
+            FROM
+                players AS p
+                INNER JOIN LATERAL (
+                    SELECT
+                        player_id
+                    FROM
+                        event_39 AS e
+                        INNER JOIN LATERAL (
+                            SELECT
+                                m.match_id, m.season
+                            FROM
+                                matches AS m
+                                INNER JOIN LATERAL (
+                                    SELECT
+                                        competition_id
+                                    FROM competitions AS c
+                                    WHERE c.name = 'La Liga'
+                                ) AS t ON m.competition_id = t.competition_id
+                        ) AS t ON e.match_id = t.match_id AND t.season = '2020/2021'
+                ) AS t ON p.player_id = t.player_id
+            GROUP BY p.name
+            ORDER BY num_of_dribbles ASC
+            ;
+            """
 
     #==========================================================================
 
