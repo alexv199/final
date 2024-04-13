@@ -330,7 +330,33 @@ def Q_4(conn, execution_time):
     #==========================================================================
     # Enter QUERY within the quotes:
 
-    query = """ """
+    query = """
+            SELECT
+                name, COUNT(*) AS num_passes
+            FROM
+                teams AS t0
+                INNER JOIN LATERAL (
+                    SELECT
+                        team_id
+                    FROM
+                        event_30 AS e
+                        INNER JOIN LATERAL (
+                            SELECT
+                                m.match_id, m.season
+                            FROM
+                                matches AS m
+                                INNER JOIN LATERAL (
+                                    SELECT
+                                        competition_id
+                                    FROM competitions AS c
+                                    WHERE c.name = 'La Liga'
+                                ) AS t ON m.competition_id = t.competition_id
+                        ) AS t ON e.match_id = t.match_id AND t.season = '2020/2021'
+                ) AS t ON t0.team_id = t.team_id
+            GROUP BY name
+            ORDER BY num_passes DESC
+            ;
+            """
 
     #==========================================================================
 
@@ -352,7 +378,33 @@ def Q_5(conn, execution_time):
     #==========================================================================
     # Enter QUERY within the quotes:
 
-    query = """ """
+    query = """
+            SELECT
+                name, COUNT(*) AS num_intended_recipient
+            FROM
+                players AS p
+                INNER JOIN LATERAL (
+                    SELECT
+                        recipient
+                    FROM
+                        event_30 AS e
+                        INNER JOIN LATERAL (
+                            SELECT
+                                m.match_id, m.season
+                            FROM
+                                matches AS m
+                                INNER JOIN LATERAL (
+                                    SELECT
+                                        competition_id
+                                    FROM competitions AS c
+                                    WHERE c.name = 'Premier League'
+                                ) AS t ON m.competition_id = t.competition_id
+                        ) AS t ON e.match_id = t.match_id AND t.season = '2003/2004'
+                ) AS t ON p.player_id = t.recipient
+            GROUP BY name
+            ORDER BY num_intended_recipient DESC
+            ;
+            """
 
     #==========================================================================
 
