@@ -1,3 +1,43 @@
+-- create composite data types
+DO $$ BEGIN
+CREATE TYPE card AS (
+    time                timestamp,
+    type                varchar(20),
+    reason              varchar(20),
+    period              integer
+);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+CREATE TYPE position AS (
+    name                varchar(25),
+    "from"                timestamp,
+    "to"                  timestamp,
+    from_period         integer,
+    to_period           integer,
+    start_reason        varchar(35),
+    end_reason          varchar(35)
+);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+-- a lineup data type for events 35 and 36
+CREATE TYPE lineup AS (
+    player_id               integer, -- REFERENCES players
+    position                varchar(25),
+    jersey_number           int
+);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+
+-- create tables
+
 CREATE TABLE IF NOT EXISTS referees (
     referee_id          integer PRIMARY KEY,
     name                varchar(50),
@@ -71,23 +111,6 @@ CREATE TABLE IF NOT EXISTS players (
     country             varchar(35)
 );
 
-
-CREATE TYPE card AS (
-    time                timestamp,
-    type                varchar(20),
-    reason              varchar(20),
-    period              integer
-);
-
-CREATE TYPE position AS (
-    name                varchar(25),
-    "from"                timestamp,
-    "to"                  timestamp,
-    from_period         integer,
-    to_period           integer,
-    start_reason        varchar(35),
-    end_reason          varchar(35)
-);
 
 
 CREATE TABLE IF NOT EXISTS lineups (
@@ -721,14 +744,6 @@ CREATE TABLE IF NOT EXISTS event_16 (
     body_part               varchar(20),
     type                    varchar(20),
     outcome                 varchar(20)
-);
-
-
--- a lineup data type for events 35 and 36
-CREATE TYPE lineup AS (
-    player_id               integer, -- REFERENCES players
-    position                varchar(25),
-    jersey_number           int
 );
 
 
