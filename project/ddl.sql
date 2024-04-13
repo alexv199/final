@@ -29,7 +29,7 @@ CREATE TABLE teams (
     team_id             integer PRIMARY KEY,
     name                varchar(50),
     gender              varchar(6),
-    group               varchar(20), -- not sure about character length
+    "group"               varchar(20), -- not sure about character length
     country             varchar(35)
 );
 
@@ -37,9 +37,9 @@ CREATE TABLE teams (
 DROP TABLE IF EXISTS competitions; -- done
 CREATE TABLE competitions (
     competition_id      int PRIMARY KEY,
-    country             varchar(35)
-    name                varChar(50),
-    gender              varChar(6),
+    country             varchar(35),
+    name              varchar(50),
+    gender              varchar(6),
     youth               boolean,
     international       boolean
 );
@@ -89,8 +89,8 @@ CREATE TYPE card AS (
 
 CREATE TYPE position AS (
     name                varchar(25),
-    from                timestamp,
-    to                  timestamp,
+    "from"                timestamp,
+    "to"                  timestamp,
     from_period         integer,
     to_period           integer,
     start_reason        varchar(35),
@@ -104,7 +104,7 @@ CREATE TABLE lineups (
     team_id             integer REFERENCES teams,
     player_id           integer REFERENCES players,
     cards               card[],
-    positions           position[],
+    positions           "position"[],
     jersey_number       integer
 );
 
@@ -280,7 +280,7 @@ CREATE TABLE event_3 (
     position                varchar(25),
     location                point,
     under_pressure          boolean,
-    off_camera              boolean,
+    off_camera              boolean
 );
 
 
@@ -368,7 +368,7 @@ CREATE TABLE event_37 (
     position                varchar(25),
     location                point,
     under_pressure          boolean,
-    off_camera              boolean,
+    off_camera              boolean
 );
 
 
@@ -623,7 +623,7 @@ CREATE TABLE event_30 (
     backheel                boolean,
     deflected               boolean,
     miscommunication        boolean,
-    cross                   boolean,
+    "cross"                   boolean,
     cut_back                boolean,
     switch                  boolean,
     shot_assist             boolean,
@@ -748,7 +748,7 @@ CREATE TABLE event_16 (
     under_pressure          boolean,
     off_camera              boolean,
     out                     boolean,
-    key_pass_id             integer REFERENCES event_30.
+    key_pass_id             integer REFERENCES event_30,
     end_location            point,
     aerial_won              boolean,
     follows_dribble         boolean,
