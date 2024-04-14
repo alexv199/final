@@ -46,7 +46,7 @@
 
 \thispagestyle{empty}
 
-{\scshape Émile Greer (100914184) and Alex Vena ()} \hfill {Project V1 \scshape \large} \hfill {\scshape COMP 3005 - Winter 2024}
+{\scshape Émile Greer (100914184) and Alex Vena (1011111179)} \hfill {Project V1 \scshape \large} \hfill {\scshape COMP 3005 - Winter 2024}
  
 \smallskip
 \hrule
@@ -54,15 +54,18 @@
 
 \section*{Conceptual Design}
 \subsection*{Entity-Relation Diagram}
+You can access the ER diagram here: \href{https://dbdiagram.io/d/ER-Diagram-661b1d7d03593b6b61ec588d}{ER Diagram}.
+
 
 \subsection*{Assumptions}
 \begin{enumerate}
-    \item If an attribute is the same for every row in a table, we ommit that attribute. Examples include the 'duration' attribute in the event tables. In many cases, 'duration' is always 0.0 - for those tables we ommit the 'duration' attribute entirely.
-    \item The 'related\_events' attribute cannot refer to an event from a different match. This assumption was made for data validation and to reduce json\_loader execution times.
+    \item If an attribute is the same for every row in a table, we may omit that attribute. Examples include the 'duration' attribute in the event tables. In many cases, 'duration' is always 0.0 - for those tables we omit the 'duration' attribute entirely.
+    \item The 'related\_events' attribute cannot refer to an event from a different match. This assumption was made for data validation and to significantly reduce json\_loader execution times.
 \end{enumerate}
 
-\section*{Reduction to Relation Schemas}
-You can access the full schema here: \href{https://dbdiagram.io/d/soccer_schema-66196f2f03593b6b61de1763}{Reduction to Relational Schemas}.
+\section*{Reduction to Relational Schemas}
+You can access the full schema here: \href{https://dbdiagram.io/d/soccer_schema-66196f2f03593b6b61de1763}{Reduction to Relational Schemas}. Otherwise, we have included screenshots below.
+\smallskip
 
 \includegraphics[width=\textwidth]{reduction/1.png}
 \includegraphics[width=\textwidth]{reduction/2.png}
@@ -71,7 +74,10 @@ You can access the full schema here: \href{https://dbdiagram.io/d/soccer_schema-
 \includegraphics[width=\textwidth]{reduction/5.png}
 \includegraphics[width=\textwidth]{reduction/6.png}
 
-\section*{Database Schema Diagrams}
+\section*{Database Schema Diagram}
+
+You can access the full diagram here: \href{https://dbdiagram.io/d/Database-schema-diagram-6619a29d03593b6b61e0aa1a}{Database Schema Diagram}. Otherwise, we have included screenshots below.
+\smallskip
 
 \includegraphics[width=\textwidth]{schema-diagram/matches_schema.png}
 \includegraphics[width=\textwidth]{schema-diagram/event_2.png}
